@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "oauth2-client": "",
+    "express": "",
     "webfinger": "https://github.com/francois2metz/node-webfinger/tarball/master"
   },
   "engines": {

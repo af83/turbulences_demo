@@ -1,0 +1,7 @@
+header
+  ul
+    - if (user)
+      li: a(href: "/logout") Logout
+      li #{user.name}
+    - else
+      li: a(href: "/login") Login
