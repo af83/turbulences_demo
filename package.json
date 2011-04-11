@@ -9,7 +9,7 @@
     "lib": "."
   },
   "dependencies": {
-    "oauth2-client": "",
+    "oauth2-client": "https://github.com/AF83/oauth2_client_node/tarball/master",
     "express": "",
     "webfinger": "https://github.com/francois2metz/node-webfinger/tarball/master",
     "request": "",

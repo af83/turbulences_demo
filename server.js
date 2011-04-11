@@ -32,10 +32,9 @@ var oauth2_client_options = {
     treat_access_token: function(access_token, req, res, callback) {
       request.get({uri: 'http://localhost:7070/portable_contacts/@me/@self',
                    headers: {"Authorization" : "OAuth "+ access_token.token.access_token}},
-                  function(status_code, headers, data) {
-                    console.log(data);
-                    var info = JSON.parse(data);
-                    req.session.user_email = info.entry[0].displayName;
+                  function(err, response, body) {
+                    var info = JSON.parse(body);
+                    req.session.user = info.entry;
                     callback();
                   });
     }
@@ -47,14 +46,13 @@ var client = oauth2_client.createClient(config.oauth2_client, oauth2_client_opti
 var server = express.createServer(
     express.static(__dirname + '/public'),
     express.logger(),
-    client.connector(),
     express.bodyParser(),
     express.cookieParser(),
     express.session({ secret: "klhs34654d67lu6gh" }),
+    client.connector(),
     express.router(function(app) {
 
         app.get('/', function(req, res, next) {
-            console.log(req.session);
             res.render('home', {user: req.session.user});
         });
 
