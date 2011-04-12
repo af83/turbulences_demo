@@ -1,8 +1,8 @@
 {
-  "name": "turbulences_demo_site",
+  "name": "turbulences_demo",
   "version": "0.0.0",
   "repository": {
-    "url": ""
+    "url": "https://github.com/AF83/turbulences_demo.git"
   },
   "author": "François de Metz <fdemetz@af83.com>",
   "directories": {
@@ -16,6 +16,6 @@
     "jade": ""
   },
   "engines": {
-    "node": "*"
+    "node": "~0.4.0"
   }
 }
