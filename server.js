@@ -1,6 +1,8 @@
 var express = require('express')
   , request = require('request')
-  , oauth2_client = require('oauth2-client');
+  , oauth2_client = require('oauth2-client')
+  , webfinger = require('webfinger')
+ ;
 
 var base_url = 'http://127.0.0.1:3000';
 var config = {
@@ -43,23 +45,37 @@ var oauth2_client_options = {
 
 var client = oauth2_client.createClient(config.oauth2_client, oauth2_client_options);
 
-var server = express.createServer(
+var app = express.createServer(
     express.static(__dirname + '/public'),
     express.logger(),
     express.bodyParser(),
     express.cookieParser(),
     express.session({ secret: "klhs34654d67lu6gh" }),
-    client.connector(),
-    express.router(function(app) {
-
-        app.get('/', function(req, res, next) {
-            res.render('home', {user: req.session.user});
-        });
-
-    })
+    client.connector()
 );
-server.set('view engine', 'jade');
 
-server.listen(3000, function() {
+app.set('view engine', 'jade');
+
+app.get('/', function(req, res) {
+  res.render('home', {user: req.session.user});
+});
+
+app.post('/user/login', function(req, res) {
+  console.log(req.param('turbid'));
+  var wf = new webfinger.WebFingerClient();
+  wf.finger(req.param('turbid'), function(err, xrdObj) {
+    if (err) {
+      console.error(err);
+      return res.send('Error', 500);
+    }
+    var oauth2Links = xrdObj.getLinksByRel("http://oauth.net/core/2.0/endpoint/authorize");
+    if (oauth2Links.length < 1) {
+      return res.send('No oauth2 endpoint found.')
+    }
+    return res.send('Yeah !')
+  });
+});
+
+app.listen(3000, function() {
     console.log("running on http://127.0.0.1:3000");
 });

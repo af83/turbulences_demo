@@ -1,7 +1,8 @@
 header
-  ul
-    - if (user)
-      li: a(href: "/logout") Logout
-      li #{user.name}
-    - else
-      li: a(href: "/login") Login
+  - if (user)
+    a(href: "/logout") Logout
+    #{user.name}
+  - else
+    form(method="post", action="/user/login")
+      input(name="turbid", placeholder="Turbulences id")
+      input(type="submit", value="Login")
