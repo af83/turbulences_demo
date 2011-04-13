@@ -1,7 +1,7 @@
 var express = require('express')
   , request = require('request')
   , oauth2_client = require('oauth2-client')
-  , webfinger = require('webfinger')
+  , ostatus = require('ostatus')
  ;
 
 var base_url = 'http://127.0.0.1:3000';
@@ -62,20 +62,32 @@ app.get('/', function(req, res) {
 
 app.post('/user/login', function(req, res) {
   console.log(req.param('turbid'));
-  var wf = new webfinger.WebFingerClient();
-  wf.finger(req.param('turbid'), function(err, xrdObj) {
+  getOAuth2Endpoint(req.param('turbid'), function(err, endpoint) {
     if (err) {
-      console.error(err);
-      return res.send('Error', 500);
+      res.send('Error '+ err, 500);
+      return;
     }
-    var oauth2Links = xrdObj.getLinksByRel("http://oauth.net/core/2.0/endpoint/authorize");
-    if (oauth2Links.length < 1) {
-      return res.send('No oauth2 endpoint found.')
+    for (var i in config.oauth2_client.servers) {
+      if (i == endpoint) {
+        return client.redirects_for_login(i, res, base_url +"/");
+      }
     }
-    return res.send('Yeah !')
+    res.send('Error 2', 500);
   });
 });
 
 app.listen(3000, function() {
     console.log("running on http://127.0.0.1:3000");
 });
+
+function getOAuth2Endpoint(id, callback) {
+  ostatus.webfinger.lookup("acct:"+id, function(err, res) {
+    if (err) return callback(err);
+    for (var link in res.links) {
+      if (res.links[link].rel == 'http://turbulences.com/oauth/core/2.0/endpoint/authorize') {
+        return callback(null, res.links[link].href);
+      }
+    }
+    return callback('no link found');
+  });
+}
