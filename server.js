@@ -61,7 +61,6 @@ app.get('/', function(req, res) {
 });
 
 app.post('/user/login', function(req, res) {
-  console.log(req.param('turbid'));
   getOAuth2Endpoint(req.param('turbid'), function(err, endpoint) {
     if (err) {
       res.send('Error '+ err, 500);

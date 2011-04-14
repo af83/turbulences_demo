@@ -1,7 +1,7 @@
 header
   - if (user)
     a(href: "/logout") Logout
-    #{user.name}
+    #{user.displayName}
   - else
     form(method="post", action="/user/login")
       input(name="turbid", placeholder="Turbulences id")
