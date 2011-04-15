@@ -57,7 +57,16 @@ var app = express.createServer(
 app.set('view engine', 'jade');
 
 app.get('/', function(req, res) {
-  res.render('home', {user: req.session.user});
+  if (req.session.user) {
+    console.log(req.session.token);
+    getAtomLinks(req.session.token, function(err, atom) {
+      res.render('home', {user: req.session.user,
+                          atom: atom});
+    });
+  } else {
+    res.render('home', {user: req.session.user,
+                        atom: {items:[]}});
+  }
 });
 
 app.post('/user/login', function(req, res) {
@@ -89,4 +98,18 @@ function getOAuth2Endpoint(id, callback) {
     }
     return callback('no link found');
   });
+}
+
+function getAtomLinks(token, callback) {
+  request.get({uri: 'https://auth.af83.com/portable_contacts/@me/@all',
+               headers: {"Authorization" : "OAuth "+ token}},
+              function(err, response, body) {
+                console.log(body);
+                var contacts = JSON.parse(body);
+                contacts.entry.forEach(function(contact) {
+                  if (Array.isArray(contact.rss)) {
+                    ostatus.as.fromUrl(contact.rss[0].value, callback);
+                  }
+                });
+              });
 }
