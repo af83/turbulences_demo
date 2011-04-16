@@ -13,7 +13,7 @@
     "express": "",
     "request": "",
     "jade": "",
-    "ostatus": ""
+    "ostatus": "https://github.com/AF83/node-ostatus/tarball/update_o3"
   },
   "engines": {
     "node": "~0.4.0"
